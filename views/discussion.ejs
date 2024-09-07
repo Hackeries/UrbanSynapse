@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discussion</title>
+</head>
+<body>
+    <h1>Discussion</h1>
+    <form action="/discussions/add" method="post">
+        <input type="text" name="topic" placeholder="Discussion Topic" required>
+        <input type="text" name="participants" placeholder="Participants (comma separated)" required>
+        <button type="submit">Start Discussion</button>
+    </form>
+    <ul>
+        <% discussions.forEach(discussion => { %>
+            <li>
+                <strong><%= discussion.topic %></strong>
+                <ul>
+                    <% discussion.messages.forEach(message => { %>
+                        <li><%= message.user %>: <%= message.text %></li>
+                    <% }); %>
+                </ul>
+            </li>
+        <% }); %>
+    </ul>
+</body>
+</html>

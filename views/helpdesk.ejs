@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urban Synapse Helpdesk Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .fade-in {
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body class="bg-zinc-200 font-sans leading-normal tracking-normal">
+
+    <!-- Navbar -->
+    <nav class="bg-gray-900 text-gray-200 shadow-md">
+        <div class="container mx-auto flex justify-between items-center p-4">
+            <a href="/" class="text-2xl font-bold hover:text-orange-400 transition-colors">Urban Synapse</a>
+            <div class="navbar">
+                <a href="/" class="mx-4 text-gray-200 hover:text-orange-400 transition-colors">Home</a>
+                <a href="/projectRegister" class="mx-4 text-gray-200 hover:text-orange-400 transition-colors">Register Project</a>
+                <a href="/helpdesk" class="mx-4 text-gray-200 hover:text-orange-400 transition-colors">Helpdesk</a>
+                <button id="authButton" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">Login/Register</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="flex flex-col items-center py-12 bg-zinc-100 bg-opacity-90 rounded-lg shadow-lg mx-4 md:mx-16 fade-in">
+        <!-- Welcome Section -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-zinc-800 mb-2">How can we assist you today?</h1>
+            <p class="text-zinc-600 text-lg">Select an option below to either ask a question or request a document.</p>
+        </div>
+
+        <!-- Helpdesk Options -->
+        <div class="flex flex-col md:flex-row space-y-8 md:space-y-0 md:space-x-8">
+            <!-- Ask a Query Section -->
+            <div class="bg-zinc-50 rounded-lg shadow-md p-6 w-full md:w-80 fade-in">
+                <h2 class="text-2xl font-semibold text-zinc-800 mb-4">Ask a Query</h2>
+                <form action="/submit-query" method="POST" class="flex flex-col space-y-4">
+                    <select name="department" required class="p-3 border border-zinc-300 rounded-md focus:border-zinc-500 focus:outline-none transition duration-300 ease-in-out transform hover:scale-105">
+                        <option value="" disabled selected>Select Department</option>
+                        <option value="hr">Municipal Corporation</option>
+                        <option value="it">Electricity Board</option>
+                        <option value="finance">Road Department</option>
+                        <option value="marketing">Sewer Department</option>
+                    </select>
+                    <textarea name="query" placeholder="Provide your query in brief..." required class="p-3 border border-zinc-300 rounded-md focus:border-zinc-500 focus:outline-none h-28 transition duration-300 ease-in-out transform hover:scale-105"></textarea>
+                    <button type="submit" class="bg-zinc-800 text-white rounded-md px-4 py-2 font-semibold hover:bg-zinc-900 transition duration-300 ease-in-out transform hover:scale-105">Submit Query</button>
+                </form>
+            </div>
+
+            <!-- Request a Document Section -->
+            <div class="bg-zinc-50 rounded-lg shadow-md p-6 w-full md:w-80 fade-in">
+                <h2 class="text-2xl font-semibold text-zinc-800 mb-4">Request a Document</h2>
+                <form action="/request-document" method="POST" class="flex flex-col space-y-4">
+                    <input type="text" name="name" placeholder="Your Name" required class="p-3 border border-zinc-300 rounded-md focus:border-zinc-500 focus:outline-none transition duration-300 ease-in-out transform hover:scale-105">
+                    <input type="email" name="email" placeholder="Your Email" required class="p-3 border border-zinc-300 rounded-md focus:border-zinc-500 focus:outline-none transition duration-300 ease-in-out transform hover:scale-105">
+                    <select name="document_type" required class="p-3 border border-zinc-300 rounded-md focus:border-zinc-500 focus:outline-none transition duration-300 ease-in-out transform hover:scale-105">
+                        <option value="" disabled selected>Select document type</option>
+                        <option value="policy">Policy Document</option>
+                        <option value="report">Report</option>
+                        <option value="manual">Manual</option>
+                    </select>
+                    <textarea name="document_details" placeholder="Additional details..." class="p-3 border border-zinc-300 rounded-md focus:border-zinc-500 focus:outline-none h-28 transition duration-300 ease-in-out transform hover:scale-105"></textarea>
+                    <button type="submit" class="bg-zinc-800 text-white rounded-md px-4 py-2 font-semibold hover:bg-zinc-900 transition duration-300 ease-in-out transform hover:scale-105">Request Document</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Download PDF Section -->
+    <div class="text-center mt-12 fade-in">
+        <a href="/path/to/your/document.pdf" class="bg-blue-500 text-white rounded-md px-4 py-2 font-semibold hover:bg-blue-600 transition duration-300 ease-in-out transform hover:scale-105" download>
+            Download PDF
+        </a>
+    </div>
+
+    <!-- Modal -->
+    <div id="authModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center hidden">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md relative">
+            <button id="closeModal" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">&times;</button>
+            <div id="authContent">
+                <!-- Login Form -->
+                <div id="loginForm">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-800">Login</h2>
+                    <form action="/login" method="POST">
+                        <div class="mb-4">
+                            <label for="email" class="block text-gray-700">Email</label>
+                            <input type="email" name="email" id="email" class="border border-gray-300 p-2 w-full rounded" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="password" class="block text-gray-700">Password</label>
+                            <input type="password" name="password" id="password" class="border border-gray-300 p-2 w-full rounded" required>
+                        </div>
+                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">Login</button>
+                        <p class="mt-4">Don't have an account? <a href="#" id="showRegister" class="text-gray-800 hover:underline">Register here</a></p>
+                    </form>
+                </div>
+
+                <!-- Register Form -->
+                <div id="registerForm" class="hidden">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-800">Register</h2>
+                    <form action="/register" method="POST">
+                        <div class="mb-4">
+                            <label for="email" class="block text-gray-700">Email</label>
+                            <input type="email" name="email" id="email" class="border border-gray-300 p-2 w-full rounded" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="password" class="block text-gray-700">Password</label>
+                            <input type="password" name="password" id="password" class="border border-gray-300 p-2 w-full rounded" required>
+                        </div>
+                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">Register</button>
+                        <p class="mt-4">Already have an account? <a href="#" id="showLogin" class="text-gray-800 hover:underline">Login here</a></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript to Toggle Modals -->
+    <script>
+        document.getElementById('authButton').addEventListener('click', function() {
+            document.getElementById('authModal').classList.remove('hidden');
+        });
+
+        document.getElementById('closeModal').addEventListener('click', function() {
+            document.getElementById('authModal').classList.add('hidden');
+        });
+
+        document.getElementById('showRegister').addEventListener('click', function() {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('registerForm').classList.remove('hidden');
+        });
+
+        document.getElementById('showLogin').addEventListener('click', function() {
+            document.getElementById('registerForm').classList.add('hidden');
+            document.getElementById('loginForm').classList.remove('hidden');
+        });
+    </script>
+</body>
+</html>

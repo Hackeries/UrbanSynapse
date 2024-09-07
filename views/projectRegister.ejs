@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"
+        integrity="sha512-h9FcoyWjHcOcmEVkxOfTLnmZFWIH0iZhZT1H2TbOq55xssQGEJHEaIm+PgoUaZbRvQTNTluNOEfb1ZRy6D3BOw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body {
+            background-color: #f7f9fc;
+        }
+        #map {
+            height: 350px;
+            width: 100%;
+        }
+        /* Ensure Tailwind's dark mode works by setting up the media query */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #1f2937; /* Dark background */
+            }
+            #map {
+                border: 1px solid #374151; /* Darker border */
+            }
+        }
+    </style>
+</head>
+<body class="font-sans leading-normal tracking-normal dark:bg-gray-900">
+    <!-- Navigation Bar -->
+    <nav class="bg-gray-900 text-gray-200 shadow-md">
+        <div class="container mx-auto flex justify-between items-center p-4">
+            <a href="/" class="text-2xl font-bold hover:text-orange-400 transition-colors">Urban Synapse</a>
+            <div class="navbar">
+                <a href="/" class="mx-4 text-gray-200 hover:text-orange-400 transition-colors">Home</a>
+                <a href="/projectRegister" class="mx-4 text-gray-200 hover:text-orange-400 transition-colors">Register Project</a>
+                <a href="/helpdesk" class="mx-4 text-gray-200 hover:text-orange-400 transition-colors">Helpdesk</a>
+                <button id="authButton" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">Login/Register</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-12">
+        <h1 class="text-4xl font-extrabold text-gray-900 mb-8 text-center dark:text-gray-100">Project Registration</h1>
+        <form action="/submit" method="POST" class="bg-white p-8 rounded-lg shadow-lg max-w-lg mx-auto space-y-6 dark:bg-gray-800 dark:text-gray-100">
+            <div class="mb-6">
+                <label for="projectId" class="block text-gray-700 text-sm font-medium mb-2 dark:text-gray-300">Project ID</label>
+                <input type="text" id="projectId" name="projectId" class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 dark:border-gray-600 dark:bg-gray-700 dark:focus:ring-blue-400" placeholder="Enter Project ID" required>
+            </div>
+
+            <div class="mb-6">
+                <label for="description" class="block text-gray-700 text-sm font-medium mb-2 dark:text-gray-300">Description</label>
+                <textarea id="description" name="description" class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 dark:border-gray-600 dark:bg-gray-700 dark:focus:ring-blue-400" placeholder="Describe your project..." required></textarea>
+            </div>
+
+            <div class="mb-6">
+                <label for="department" class="block text-gray-700 text-sm font-medium mb-2 dark:text-gray-300">Department</label>
+                <select id="department" name="department" class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 dark:border-gray-600 dark:bg-gray-700 dark:focus:ring-blue-400" required>
+                    <option value="Municipal Corporation">Municipal Corporation</option>
+                    <option value="Road Department">Road Department</option>
+                    <option value="Water Department">Water Department</option>
+                    <option value="Sewer Department">Sewer Department</option>
+                </select>
+            </div>
+
+            <div class="mb-6">
+                <label for="location" class="block text-gray-700 text-sm font-medium mb-2 dark:text-gray-300">Location of Project</label>
+                <div id="addressInput" class="flex items-center space-x-2 mb-4">
+                    <input type="text" id="address" placeholder="Enter Address" aria-label="Enter Address" class="flex-1 border px-4 py-3 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 dark:border-gray-600 dark:bg-gray-700 dark:focus:ring-blue-400">
+                    <button id="fetchLocation" class="bg-blue-500 text-white px-4 py-3 rounded-lg font-semibold shadow-md hover:bg-blue-600 transition duration-300 dark:bg-blue-600 dark:hover:bg-blue-700">Fetch Location</button>
+                </div>
+                <div id="map" class="border border-gray-300 rounded-lg dark:border-gray-600"></div>
+            </div>
+
+            <div class="mb-6">
+                <label for="resources" class="block text-gray-700 text-sm font-medium mb-2 dark:text-gray-300">Resources Allocated</label>
+                <input type="text" id="resources" name="resources" class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 dark:border-gray-600 dark:bg-gray-700 dark:focus:ring-blue-400" placeholder="Specify allocated resources..." required>
+            </div>
+
+            <button type="submit" class="w-full bg-blue-500 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:bg-blue-600 transition duration-300 dark:bg-blue-600 dark:hover:bg-blue-700">Register</button>
+        </form>
+    </div>
+
+    <script src="/javascripts/script.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <!-- Modal -->
+    <div id="authModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center hidden">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md relative">
+            <button id="closeModal" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">&times;</button>
+            <div id="authContent">
+                <!-- Login Form -->
+                <div id="loginForm">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-800">Login</h2>
+                    <form action="/login" method="POST">
+                        <div class="mb-4">
+                            <label for="loginEmail" class="block text-gray-700">Email</label>
+                            <input type="email" name="email" id="loginEmail" class="border border-gray-300 p-2 w-full rounded" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="loginPassword" class="block text-gray-700">Password</label>
+                            <input type="password" name="password" id="loginPassword" class="border border-gray-300 p-2 w-full rounded" required>
+                        </div>
+                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">Login</button>
+                        <p class="mt-4">Don't have an account? <a href="#" id="showRegister" class="text-gray-800 hover:underline">Register here</a></p>
+                    </form>
+                </div>
+
+                <!-- Register Form -->
+                <div id="registerForm" class="hidden">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-800">Register</h2>
+                    <form action="/register" method="POST">
+                        <div class="mb-4">
+                            <label for="registerEmail" class="block text-gray-700">Email</label>
+                            <input type="email" name="email" id="registerEmail" class="border border-gray-300 p-2 w-full rounded" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="registerPassword" class="block text-gray-700">Password</label>
+                            <input type="password" name="password" id="registerPassword" class="border border-gray-300 p-2 w-full rounded" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="confirmPassword" class="block text-gray-700">Confirm Password</label>
+                            <input type="password" name="confirmPassword" id="confirmPassword" class="border border-gray-300 p-2 w-full rounded" required>
+                        </div>
+                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">Register</button>
+                        <p class="mt-4">Already have an account? <a href="#" id="showLogin" class="text-gray-800 hover:underline">Login here</a></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Authentication Modal Toggle
+        document.getElementById('authButton').addEventListener('click', function() {
+            document.getElementById('authModal').classList.toggle('hidden');
+        });
+
+        document.getElementById('closeModal').addEventListener('click', function() {
+            document.getElementById('authModal').classList.add('hidden');
+        });
+
+        document.getElementById('showRegister').addEventListener('click', function() {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('registerForm').classList.remove('hidden');
+        });
+
+        document.getElementById('showLogin').addEventListener('click', function() {
+            document.getElementById('registerForm').classList.add('hidden');
+            document.getElementById('loginForm').classList.remove('hidden');
+        });
+
+        // Fetch Location Logic
+        document.getElementById('fetchLocation').addEventListener('click', function(event) {
+            event.preventDefault();
+            const address = document.getElementById('address').value;
+            if (address) {
+                fetch(`https://api.example.com/geocode?address=${encodeURIComponent(address)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data && data.location) {
+                            // Initialize or update the map
+                            var map = L.map('map').setView([data.location.lat, data.location.lng], 13);
+                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                            }).addTo(map);
+                            L.marker([data.location.lat, data.location.lng]).addTo(map)
+                                .bindPopup('Project Location')
+                                .openPopup();
+                        } else {
+                            alert('Unable to fetch location. Please try again.');
+                        }
+                    });
+            } else {
+                alert('Please enter an address.');
+            }
+        });
+    </script>
+</body>
+</html>

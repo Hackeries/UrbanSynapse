@@ -1,11 +1,11 @@
 const express = require('express');
+const bcrypt = require('bcrypt');
 const router = express.Router();
-const User = require('../models/User'); // Adjust the path to your User model
-const Project = require('../models/Project'); // Adjust the path to your Project model
+const User = require('../models/User');
 
-// Handle login page rendering
-router.get('/login', function(req, res) {
-    res.render('login');
+// Render login page
+router.get('/login', (req, res) => {
+    res.render('login', { error_msg: null });
 });
 
 // Handle login form submission
@@ -13,30 +13,55 @@ router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        // Find user in the database
-        const user = await User.findOne({ EmailId: email });
-
-        if (user && user.Password === password) {
-            // Find projects where city matches user's city
-            const projects = await Project.find({ city: user.City });
-
-            // Credentials are valid, redirect to user.ejs and pass user object and projects
-            res.render('user', {
-                FirstName: user.FirstName,
-                LastName: user.LastName,
-                EmailId: user.EmailId,
-                ContactNumber: user.ContactNumber,
-                Department: user.Department,
-                City: user.City,
-                projects: projects // Pass the array of projects
-            });
+        const user = await User.findOne({ email }); // Ensure field name matches your schema
+        if (user && await bcrypt.compare(password, user.password)) { // Use bcrypt to compare passwords
+            // Redirect to landing page after successful login
+            res.render('landing');
         } else {
-            // Invalid credentials, render login page with error message
             res.render('login', { error_msg: 'Invalid credentials' });
         }
     } catch (err) {
-        console.error(err);
+        console.error('Error during login:', err);
         res.status(500).send('Server error');
+    }
+});
+
+// Render registration page
+router.get('/register', (req, res) => {
+    res.render('register', { error_msg: null });
+});
+
+// Handle registration form submission
+router.post('/register', async (req, res) => {
+    const { firstName, lastName, email, password } = req.body;
+
+    if (!firstName || !lastName || !email || !password) {
+        return res.status(400).json({ error_msg: 'All fields are required' });
+    }
+
+    try {
+        // Check if user already exists
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ error_msg: 'User already exists' });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const user = new User({
+            firstName,
+            lastName,
+            email,
+            password: hashedPassword
+        });
+
+        await user.save();
+        res.status(201).json({ message: 'User registered successfully' });
+    } catch (error) {
+        console.error('Error registering user:', error);
+        if (error.code === 11000) { // Duplicate key error
+            return res.status(400).json({ error_msg: 'Email already exists' });
+        }
+        res.status(500).json({ error_msg: 'Error registering user' });
     }
 });
 

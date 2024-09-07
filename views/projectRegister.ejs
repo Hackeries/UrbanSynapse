@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registration</title>
+    <title>Project Registration</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/stylesheets/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"
@@ -48,12 +48,14 @@
         <form action="/submit" method="POST" class="bg-white p-8 rounded-lg shadow-lg max-w-lg mx-auto space-y-6 dark:bg-gray-800 dark:text-gray-100">
             <div class="mb-6">
                 <label for="projectId" class="block text-gray-700 text-sm font-medium mb-2 dark:text-gray-300">Project ID</label>
-                <input type="text" id="projectId" name="projectId" class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 dark:border-gray-600 dark:bg-gray-700 dark:focus:ring-blue-400" placeholder="Enter Project ID" required>
+                <input type="text" id="projectId" name="projectId" class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 dark:border-gray-600 dark:bg-gray-700 dark:focus:ring-blue-400" placeholder="Enter a unique identifier for the project" required>
+                <p class="text-gray-500 text-sm mt-1 dark:text-gray-400">A unique identifier for the project, often assigned by the system.</p>
             </div>
 
             <div class="mb-6">
                 <label for="description" class="block text-gray-700 text-sm font-medium mb-2 dark:text-gray-300">Description</label>
-                <textarea id="description" name="description" class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 dark:border-gray-600 dark:bg-gray-700 dark:focus:ring-blue-400" placeholder="Describe your project..." required></textarea>
+                <textarea id="description" name="description" class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 dark:border-gray-600 dark:bg-gray-700 dark:focus:ring-blue-400" placeholder="Describe the project's goals and scope" required></textarea>
+                <p class="text-gray-500 text-sm mt-1 dark:text-gray-400">Provide a detailed description of the project, including its goals and scope.</p>
             </div>
 
             <div class="mb-6">
@@ -64,119 +66,109 @@
                     <option value="Water Department">Water Department</option>
                     <option value="Sewer Department">Sewer Department</option>
                 </select>
+                <p class="text-gray-500 text-sm mt-1 dark:text-gray-400">Select the department responsible for the project.</p>
             </div>
 
             <div class="mb-6">
-                <label for="location" class="block text-gray-700 text-sm font-medium mb-2 dark:text-gray-300">Location of Project</label>
+                <label for="location" class="block text-gray-700 text-sm font-medium mb-2 dark:text-gray-300">Project Location</label>
                 <div id="addressInput" class="flex items-center space-x-2 mb-4">
-                    <input type="text" id="address" placeholder="Enter Address" aria-label="Enter Address" class="flex-1 border px-4 py-3 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 dark:border-gray-600 dark:bg-gray-700 dark:focus:ring-blue-400">
+                    <input type="text" id="address" placeholder="Enter the project location address" aria-label="Enter Address" class="flex-1 border px-4 py-3 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 dark:border-gray-600 dark:bg-gray-700 dark:focus:ring-blue-400">
                     <button id="fetchLocation" class="bg-blue-500 text-white px-4 py-3 rounded-lg font-semibold shadow-md hover:bg-blue-600 transition duration-300 dark:bg-blue-600 dark:hover:bg-blue-700">Fetch Location</button>
                 </div>
                 <div id="map" class="border border-gray-300 rounded-lg dark:border-gray-600"></div>
+                <p class="text-gray-500 text-sm mt-1 dark:text-gray-400">Enter the address of the project location and click "Fetch Location" to display it on the map.</p>
             </div>
 
             <div class="mb-6">
                 <label for="resources" class="block text-gray-700 text-sm font-medium mb-2 dark:text-gray-300">Resources Allocated</label>
-                <input type="text" id="resources" name="resources" class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 dark:border-gray-600 dark:bg-gray-700 dark:focus:ring-blue-400" placeholder="Specify allocated resources..." required>
+                <input type="text" id="resources" name="resources" class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 dark:border-gray-600 dark:bg-gray-700 dark:focus:ring-blue-400" placeholder="Specify the resources allocated for the project" required>
+                <p class="text-gray-500 text-sm mt-1 dark:text-gray-400">Specify the resources allocated to the project, such as budget, personnel, or equipment.</p>
             </div>
 
             <button type="submit" class="w-full bg-blue-500 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:bg-blue-600 transition duration-300 dark:bg-blue-600 dark:hover:bg-blue-700">Register</button>
         </form>
     </div>
 
-    <script src="/javascripts/script.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
-
     <!-- Modal -->
     <div id="authModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center hidden">
-        <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md relative">
-            <button id="closeModal" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">&times;</button>
+        <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md relative dark:bg-gray-800 dark:text-gray-100">
+            <button id="closeModal" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-200">&times;</button>
             <div id="authContent">
                 <!-- Login Form -->
                 <div id="loginForm">
-                    <h2 class="text-xl font-semibold mb-4 text-gray-800">Login</h2>
+                    <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">Login</h2>
                     <form action="/login" method="POST">
                         <div class="mb-4">
-                            <label for="loginEmail" class="block text-gray-700">Email</label>
-                            <input type="email" name="email" id="loginEmail" class="border border-gray-300 p-2 w-full rounded" required>
+                            <label for="loginEmail" class="block text-gray-700 dark:text-gray-300">Email</label>
+                            <input type="email" name="email" id="loginEmail" class="border border-gray-300 p-2 w-full rounded dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100" required>
                         </div>
                         <div class="mb-4">
-                            <label for="loginPassword" class="block text-gray-700">Password</label>
-                            <input type="password" name="password" id="loginPassword" class="border border-gray-300 p-2 w-full rounded" required>
+                            <label for="loginPassword" class="block text-gray-700 dark:text-gray-300">Password</label>
+                            <input type="password" name="password" id="loginPassword" class="border border-gray-300 p-2 w-full rounded dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100" required>
                         </div>
-                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">Login</button>
-                        <p class="mt-4">Don't have an account? <a href="#" id="showRegister" class="text-gray-800 hover:underline">Register here</a></p>
+                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition dark:bg-blue-600 dark:hover:bg-blue-700">Login</button>
                     </form>
+                    <p class="mt-4 text-gray-600 dark:text-gray-400">Don't have an account? <button id="showRegister" class="text-blue-500 hover:underline">Register here</button></p>
                 </div>
 
                 <!-- Register Form -->
                 <div id="registerForm" class="hidden">
-                    <h2 class="text-xl font-semibold mb-4 text-gray-800">Register</h2>
+                    <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">Register</h2>
                     <form action="/register" method="POST">
                         <div class="mb-4">
-                            <label for="registerEmail" class="block text-gray-700">Email</label>
-                            <input type="email" name="email" id="registerEmail" class="border border-gray-300 p-2 w-full rounded" required>
+                            <label for="registerEmail" class="block text-gray-700 dark:text-gray-300">Email</label>
+                            <input type="email" name="email" id="registerEmail" class="border border-gray-300 p-2 w-full rounded dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100" required>
                         </div>
                         <div class="mb-4">
-                            <label for="registerPassword" class="block text-gray-700">Password</label>
-                            <input type="password" name="password" id="registerPassword" class="border border-gray-300 p-2 w-full rounded" required>
+                            <label for="registerPassword" class="block text-gray-700 dark:text-gray-300">Password</label>
+                            <input type="password" name="password" id="registerPassword" class="border border-gray-300 p-2 w-full rounded dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100" required>
                         </div>
-                        <div class="mb-4">
-                            <label for="confirmPassword" class="block text-gray-700">Confirm Password</label>
-                            <input type="password" name="confirmPassword" id="confirmPassword" class="border border-gray-300 p-2 w-full rounded" required>
-                        </div>
-                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">Register</button>
-                        <p class="mt-4">Already have an account? <a href="#" id="showLogin" class="text-gray-800 hover:underline">Login here</a></p>
+                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition dark:bg-blue-600 dark:hover:bg-blue-700">Register</button>
                     </form>
+                    <p class="mt-4 text-gray-600 dark:text-gray-400">Already have an account? <button id="showLogin" class="text-blue-500 hover:underline">Login here</button></p>
                 </div>
             </div>
         </div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"
+        integrity="sha512-1A1+H4zHS0B2ZHZRRT30um/jiRGFsVpY7WQZ6d1JtnmtF6s66O7FJYXHjF6U5vvb6RsD5ML+G9FZymHktcocA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
-        // Authentication Modal Toggle
-        document.getElementById('authButton').addEventListener('click', function() {
-            document.getElementById('authModal').classList.toggle('hidden');
-        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const authButton = document.getElementById('authButton');
+            const authModal = document.getElementById('authModal');
+            const closeModal = document.getElementById('closeModal');
+            const showRegister = document.getElementById('showRegister');
+            const showLogin = document.getElementById('showLogin');
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
 
-        document.getElementById('closeModal').addEventListener('click', function() {
-            document.getElementById('authModal').classList.add('hidden');
-        });
+            authButton.addEventListener('click', () => {
+                authModal.classList.remove('hidden');
+            });
 
-        document.getElementById('showRegister').addEventListener('click', function() {
-            document.getElementById('loginForm').classList.add('hidden');
-            document.getElementById('registerForm').classList.remove('hidden');
-        });
+            closeModal.addEventListener('click', () => {
+                authModal.classList.add('hidden');
+            });
 
-        document.getElementById('showLogin').addEventListener('click', function() {
-            document.getElementById('registerForm').classList.add('hidden');
-            document.getElementById('loginForm').classList.remove('hidden');
-        });
+            showRegister.addEventListener('click', () => {
+                loginForm.classList.add('hidden');
+                registerForm.classList.remove('hidden');
+            });
 
-        // Fetch Location Logic
-        document.getElementById('fetchLocation').addEventListener('click', function(event) {
-            event.preventDefault();
-            const address = document.getElementById('address').value;
-            if (address) {
-                fetch(`https://api.example.com/geocode?address=${encodeURIComponent(address)}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data && data.location) {
-                            // Initialize or update the map
-                            var map = L.map('map').setView([data.location.lat, data.location.lng], 13);
-                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                            }).addTo(map);
-                            L.marker([data.location.lat, data.location.lng]).addTo(map)
-                                .bindPopup('Project Location')
-                                .openPopup();
-                        } else {
-                            alert('Unable to fetch location. Please try again.');
-                        }
-                    });
-            } else {
-                alert('Please enter an address.');
-            }
+            showLogin.addEventListener('click', () => {
+                registerForm.classList.add('hidden');
+                loginForm.classList.remove('hidden');
+            });
+
+            // Map initialization (if applicable)
+            const map = L.map('map').setView([51.505, -0.09], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
         });
     </script>
 </body>

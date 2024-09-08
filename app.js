@@ -7,10 +7,13 @@ const path = require('path');
 const axios = require('axios');
 const http = require('http');
 const socketio = require('socket.io');
+<<<<<<< HEAD
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const User = require('./models/User'); // Import User model
 const bcrypt = require('bcrypt');
+=======
+>>>>>>> d700c7838707771037971175418573abc36cfab0
 const config = require('./config'); // Import the updated config
 
 const app = express();
@@ -21,6 +24,7 @@ const io = socketio(server);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+<<<<<<< HEAD
 app.use(session({
     secret: config.sessionSecret || 'your-secret-key', // Ensure you have a secret key in your config
     resave: false,
@@ -58,11 +62,26 @@ passport.deserializeUser(async (id, done) => {
 
 app.use(passport.initialize());
 app.use(passport.session());
+=======
+// Configure session middleware
+app.use(session({
+    secret: config.sessionSecret,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: process.env.NODE_ENV === 'production' } // Secure cookies in production
+}));
+
+app.use(flash());
+app.use(express.static(path.join(__dirname, 'public')));
+>>>>>>> d700c7838707771037971175418573abc36cfab0
 
 // Set view engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+<<<<<<< HEAD
 app.use(express.static(path.join(__dirname, 'public')));
+=======
+>>>>>>> d700c7838707771037971175418573abc36cfab0
 
 // Connect to MongoDB
 mongoose.connect(config.mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -72,12 +91,15 @@ mongoose.connect(config.mongoURI, { useNewUrlParser: true, useUnifiedTopology: t
         process.exit(1); // Exit process if database connection fails
     });
 
+<<<<<<< HEAD
 // Middleware to set `user` in res.locals
 app.use((req, res, next) => {
     res.locals.user = req.user || null; // Ensure req.user is set by authentication middleware
     next();
 });
 
+=======
+>>>>>>> d700c7838707771037971175418573abc36cfab0
 // Routes
 app.use('/', require('./routes/auth')); // Login and authentication routes
 app.use('/tasks', require('./routes/task')); // Task routes
@@ -87,24 +109,45 @@ app.use('/dashboard', require('./routes/dashboard')); // Dashboard route
 
 // Landing Page Route
 app.get('/', (req, res) => {
+<<<<<<< HEAD
     res.render('landing', { user: res.locals.user });
+=======
+    res.render('landing', { user: req.session.userId });
+>>>>>>> d700c7838707771037971175418573abc36cfab0
 });
 
 // Project Registration Route
 app.get('/projectRegister', (req, res) => {
+<<<<<<< HEAD
     res.render('projectRegister', { user: res.locals.user });
 });
 
 // Helpdesk Route
 app.get('/helpdesk', (req, res) => {
     res.render('helpdesk', { user: res.locals.user });
+=======
+    res.render('projectRegister');
+});
+
+// Helpdesk Page Route
+app.get('/helpdesk', (req, res) => {
+    res.render('helpdesk');
+>>>>>>> d700c7838707771037971175418573abc36cfab0
 });
 
 // Dashboard Route
 app.get('/dashboard', async (req, res) => {
     try {
+<<<<<<< HEAD
         const tasks = await getTasks(); // Replace with actual function to get tasks
         res.render('dashboard', { tasks, user: res.locals.user });
+=======
+        // Fetch tasks from your database or source
+        const tasks = await getTasks(); // Replace with actual function to get tasks
+
+        // Render the EJS template and pass tasks as a variable
+        res.render('landing', { tasks });
+>>>>>>> d700c7838707771037971175418573abc36cfab0
     } catch (error) {
         console.error('Error fetching tasks:', error);
         res.status(500).send('Internal Server Error');
@@ -115,6 +158,10 @@ app.get('/dashboard', async (req, res) => {
 io.on('connection', (socket) => {
     console.log('User connected:', socket.id);
 
+<<<<<<< HEAD
+=======
+    // Handle fetching of geolocation based on address
+>>>>>>> d700c7838707771037971175418573abc36cfab0
     socket.on('fetch-address-location', async ({ address }) => {
         try {
             const response = await axios.get('https://nominatim.openstreetmap.org/search', {
@@ -136,6 +183,10 @@ io.on('connection', (socket) => {
         }
     });
 
+<<<<<<< HEAD
+=======
+    // Handle user disconnection
+>>>>>>> d700c7838707771037971175418573abc36cfab0
     socket.on('disconnect', () => {
         io.emit('user-disconnected', socket.id);
         console.log('User disconnected:', socket.id);
@@ -146,4 +197,8 @@ io.on('connection', (socket) => {
 const port = process.env.PORT || 3000;
 server.listen(port, () => {
     console.log(`Server listening on port ${port}`);
+<<<<<<< HEAD
 });
+=======
+});
+>>>>>>> d700c7838707771037971175418573abc36cfab0

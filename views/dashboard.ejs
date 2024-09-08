@@ -5,46 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link rel="stylesheet" href="https://cdn.tailwindcss.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.3/main.min.css" />
+    <style>
+        #calendar {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .notification-item {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+    </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
-    <!-- Navbar -->
     <nav class="bg-blue-600 p-4 shadow-md fixed w-full">
         <div class="container mx-auto flex justify-between items-center">
             <div class="text-white font-bold text-lg">Dashboard</div>
             <ul class="flex space-x-4">
-                <li><a href="#" class="text-white hover:underline">Home</a></li>
-                <li><a href="#" class="text-white hover:underline">Tasks</a></li>
-                <li><a href="#" class="text-white hover:underline">Projects</a></li>
-                <li><a href="#" class="text-white hover:underline">Teams</a></li>
-                <li><a href="#" class="text-white hover:underline">Profile</a></li>
-                <li><a href="#" class="text-white hover:underline">Logout</a></li>
+                <li><a href="/" class="text-white hover:underline">Home</a></li>
+                <li><a href="/tasks" class="text-white hover:underline">Tasks</a></li>
+                <li><a href="/projects" class="text-white hover:underline">Projects</a></li>
+                <li><a href="/teams" class="text-white hover:underline">Teams</a></li>
+                <li><a href="/profile" class="text-white hover:underline">Profile</a></li>
+                <li><a href="/logout" class="text-white hover:underline">Logout</a></li>
             </ul>
         </div>
     </nav>
 
-    <!-- Main Content -->
     <div class="container mx-auto mt-20 p-4">
-        <!-- Overview Section -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <div class="bg-white p-6 rounded-lg shadow-md">
-                <h2 class="font-bold text-xl mb-2">Total Tasks</h2>
-                <p class="text-3xl">20</p>
-            </div>
-            <div class="bg-white p-6 rounded-lg shadow-md">
-                <h2 class="font-bold text-xl mb-2">Pending Tasks</h2>
-                <p class="text-3xl">5</p>
-            </div>
-            <div class="bg-white p-6 rounded-lg shadow-md">
-                <h2 class="font-bold text-xl mb-2">Completed Tasks</h2>
-                <p class="text-3xl">10</p>
-            </div>
-            <div class="bg-white p-6 rounded-lg shadow-md">
-                <h2 class="font-bold text-xl mb-2">Upcoming Deadlines</h2>
-                <p class="text-3xl">3</p>
-            </div>
+            <!-- Cards for Overview -->
         </div>
 
-        <!-- Task List Section -->
         <div class="bg-white p-6 rounded-lg shadow-md mb-6">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="font-bold text-2xl">Tasks</h2>
@@ -70,8 +62,10 @@
                             <td class="py-2 px-4 border-b border-gray-200"><%= task.status %></td>
                             <td class="py-2 px-4 border-b border-gray-200"><%= task.dueDate ? task.dueDate.toDateString() : 'None' %></td>
                             <td class="py-2 px-4 border-b border-gray-200">
-                                <button class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-400">Edit</button>
-                                <button class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-400">Delete</button>
+                                <a href="/tasks/edit/<%= task.id %>" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-400">Edit</a>
+                                <form action="/tasks/delete/<%= task.id %>" method="post" class="inline">
+                                    <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-400">Delete</button>
+                                </form>
                             </td>
                         </tr>
                     <% }); %>
@@ -79,18 +73,48 @@
             </table>
         </div>
 
-        <!-- Calendar Section -->
         <div class="bg-white p-6 rounded-lg shadow-md mb-6">
             <h2 class="font-bold text-2xl mb-4">Calendar</h2>
-            <!-- Calendar component goes here -->
+            <div id="calendar"></div>
         </div>
 
-        <!-- Notifications Section -->
         <div class="bg-white p-6 rounded-lg shadow-md mb-6">
             <h2 class="font-bold text-2xl mb-4">Notifications</h2>
-            <!-- Notifications list goes here -->
+            <div id="notifications">
+                <!-- Notifications will be added dynamically here -->
+            </div>
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.3/main.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.2/socket.io.min.js"></script>
+    <script>
+        // Initialize FullCalendar
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                events: '/events', // Adjust to your events endpoint
+                editable: true
+            });
+            calendar.render();
+        });
+
+        // Initialize Socket.io
+        const socket = io();
+
+        // Listen for notifications
+        socket.on('notification', function(notification) {
+            const notificationsDiv = document.getElementById('notifications');
+            const notificationItem = document.createElement('div');
+            notificationItem.classList.add('notification-item');
+            notificationItem.textContent = notification.message;
+            notificationsDiv.appendChild(notificationItem);
+        });
+
+        // Example: Emit a test notification
+        // You should handle real notifications from your server
+        socket.emit('test-notification', { message: 'Test notification from server' });
+    </script>
 </body>
 </html>

@@ -29,7 +29,15 @@
                 <a href="/" class="mx-4 text-gray-200 hover:text-orange-400 transition-colors">Home</a>
                 <a href="/projectRegister" class="mx-4 text-gray-200 hover:text-orange-400 transition-colors">Register Project</a>
                 <a href="/helpdesk" class="mx-4 text-gray-200 hover:text-orange-400 transition-colors">Helpdesk</a>
-                <button id="authButton" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">Login/Register</button>
+                <% if (user) { %>
+                    <!-- Show Logout button if the user is logged in -->
+                    <form action="/logout" method="POST" class="inline">
+                        <button type="submit" class="button-primary px-4 py-2 rounded">Logout</button>
+                    </form>
+                <% } else { %>
+                    <!-- Show Login / Register button if the user is not logged in -->
+                    <a href="/login" class="button-primary px-4 py-2 rounded">Login / Register</a>
+                <% } %>
             </div>
         </div>
     </nav>
@@ -86,67 +94,5 @@
         </a>
     </div>
 
-    <!-- Modal -->
-    <div id="authModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center hidden">
-        <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md relative">
-            <button id="closeModal" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">&times;</button>
-            <div id="authContent">
-                <!-- Login Form -->
-                <div id="loginForm">
-                    <h2 class="text-xl font-semibold mb-4 text-gray-800">Login</h2>
-                    <form action="/login" method="POST">
-                        <div class="mb-4">
-                            <label for="email" class="block text-gray-700">Email</label>
-                            <input type="email" name="email" id="email" class="border border-gray-300 p-2 w-full rounded" required>
-                        </div>
-                        <div class="mb-4">
-                            <label for="password" class="block text-gray-700">Password</label>
-                            <input type="password" name="password" id="password" class="border border-gray-300 p-2 w-full rounded" required>
-                        </div>
-                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">Login</button>
-                        <p class="mt-4">Don't have an account? <a href="#" id="showRegister" class="text-gray-800 hover:underline">Register here</a></p>
-                    </form>
-                </div>
-
-                <!-- Register Form -->
-                <div id="registerForm" class="hidden">
-                    <h2 class="text-xl font-semibold mb-4 text-gray-800">Register</h2>
-                    <form action="/register" method="POST">
-                        <div class="mb-4">
-                            <label for="email" class="block text-gray-700">Email</label>
-                            <input type="email" name="email" id="email" class="border border-gray-300 p-2 w-full rounded" required>
-                        </div>
-                        <div class="mb-4">
-                            <label for="password" class="block text-gray-700">Password</label>
-                            <input type="password" name="password" id="password" class="border border-gray-300 p-2 w-full rounded" required>
-                        </div>
-                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">Register</button>
-                        <p class="mt-4">Already have an account? <a href="#" id="showLogin" class="text-gray-800 hover:underline">Login here</a></p>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- JavaScript to Toggle Modals -->
-    <script>
-        document.getElementById('authButton').addEventListener('click', function() {
-            document.getElementById('authModal').classList.remove('hidden');
-        });
-
-        document.getElementById('closeModal').addEventListener('click', function() {
-            document.getElementById('authModal').classList.add('hidden');
-        });
-
-        document.getElementById('showRegister').addEventListener('click', function() {
-            document.getElementById('loginForm').classList.add('hidden');
-            document.getElementById('registerForm').classList.remove('hidden');
-        });
-
-        document.getElementById('showLogin').addEventListener('click', function() {
-            document.getElementById('registerForm').classList.add('hidden');
-            document.getElementById('loginForm').classList.remove('hidden');
-        });
-    </script>
 </body>
 </html>

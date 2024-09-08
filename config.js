@@ -1,4 +1,6 @@
+require('dotenv').config(); // Load environment variables from .env file
+
 module.exports = {
-    mongoURI: 'mongodb://127.0.0.1:27017/interdepartmental-platform',
-    sessionSecret: 'your-session-secret'
+    mongoURI: process.env.MONGO_URI,
+    sessionSecret: process.env.SESSION_SECRET,
 };

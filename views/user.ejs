@@ -16,7 +16,15 @@
                 <a href="/" class="mx-4 text-gray-200 hover:text-orange-400 transition-colors">Home</a>
                 <a href="/projectRegister" class="mx-4 text-gray-200 hover:text-orange-400 transition-colors">Register Project</a>
                 <a href="/helpdesk" class="mx-4 text-gray-200 hover:text-orange-400 transition-colors">Helpdesk</a>
-                <button id="authButton" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">Login/Register</button>
+                <% if (user) { %>
+                    <!-- Show Logout button if the user is logged in -->
+                    <form action="/logout" method="POST" class="inline">
+                        <button type="submit" class="button-primary px-4 py-2 rounded">Logout</button>
+                    </form>
+                <% } else { %>
+                    <!-- Show Login / Register link if the user is not logged in -->
+                    <a href="/login" class="button-primary px-4 py-2 rounded">Login / Register</a>
+                <% } %>
             </div>
         </div>
     </nav>
